@@ -11,6 +11,51 @@ class _BiometricAuthScreenState extends State<BiometricAuthScreen> {
   String _authorized = 'Not Authorized';
 
   @override
+  void initState() {
+    super.initState();
+    _checkBiometrics();
+  }
+
+  Future<void> _checkBiometrics() async {
+    bool canCheckBiometrics;
+    try {
+      canCheckBiometrics = await auth.canCheckBiometrics;
+    } on Exception catch (e) {
+      print(e);
+      canCheckBiometrics = false;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _authorized = canCheckBiometrics
+          ? 'Biometrics available'
+          : 'Biometrics not available';
+    });
+  }
+
+  Future<void> _authenticate() async {
+    bool authenticated = false;
+    try {
+      authenticated = await auth.authenticate(
+        localizedReason: '지문을 스캔하여 본인 인증을 해주세요',
+        options: const AuthenticationOptions(
+          useErrorDialogs: true,
+          stickyAuth: true,
+        ),
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _authorized = authenticated ? 'Authorized' : 'Not Authorized';
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -39,23 +84,5 @@ class _BiometricAuthScreenState extends State<BiometricAuthScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _authenticate() async {
-    bool authenticated = false;
-    try {
-      authenticated = await auth.authenticate(
-        localizedReason: '지문을 스캔하여 본인 인증을 해주세요',
-        options: const AuthenticationOptions(
-          useErrorDialogs: true,
-          stickyAuth: true,
-        ),
-      );
-    } on Exception catch (e) {
-      print(e);
-    }
-    setState(() {
-      _authorized = authenticated ? 'Authorized' : 'Not Authorized';
-    });
   }
 }
