@@ -118,6 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                 leading: Icon(Icons.person, color: Colors.green),
                 title: Text('아이디'),
                 onTap: () {
+                  Navigator.pop(context);
                   // 아이디 로그인 로직 추가
                 },
               ),

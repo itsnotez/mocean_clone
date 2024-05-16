@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:mocean_app/main_screen.dart';
 
 class BiometricAuthScreen extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _BiometricAuthScreenState extends State<BiometricAuthScreen> {
   @override
   void initState() {
     super.initState();
-    _checkBiometrics();
+    _authenticate();
   }
 
   Future<void> _checkBiometrics() async {
@@ -53,6 +54,12 @@ class _BiometricAuthScreenState extends State<BiometricAuthScreen> {
     setState(() {
       _authorized = authenticated ? 'Authorized' : 'Not Authorized';
     });
+    if (authenticated) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen()),
+      );
+    }
   }
 
   @override
